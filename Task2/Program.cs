@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiniCalculator
+namespace Task2
 {
     public interface ISum
     {
@@ -9,8 +9,16 @@ namespace MiniCalculator
 
     public class Calculator : ISum
     {
+        private readonly ILogger _logger;
+
+        public Calculator(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public decimal Add(decimal a, decimal b)
         {
+            _logger.LogInfo($"Начато сложение: {a} + {b}");
             return a + b;
         }
     }
@@ -19,7 +27,8 @@ namespace MiniCalculator
     {
         static void Main(string[] args)
         {
-            Calculator calculator = new Calculator();
+            ILogger logger = new Logger(); 
+            Calculator calculator = new Calculator(logger);
             decimal NumberX = 0;
             decimal NumberY = 0;
             bool isValid = false;
@@ -41,17 +50,17 @@ namespace MiniCalculator
             }
             catch (FormatException Ex)
             {
-                Console.WriteLine("Ошибка: введено некорректное значение. Пожалуйста, введите числовое значение.");
+                logger.LogError("Ошибка: введено некорректное значение. Пожалуйста, введите числовое значение.");
             }
             catch (OverflowException Ex)
             {
-                Console.WriteLine("Ошибка: введённое число слишком большое или слишком маленькое.");
+                logger.LogError("Ошибка: введённое число слишком большое или слишком маленькое.");
             }
             finally
             {
                 if (!isValid)
                 {
-                    Console.WriteLine("Пожалуйста, попробуйте снова.");
+                    logger.LogInfo("Пожалуйста, попробуйте снова.");
                 }
             }
 
